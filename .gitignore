@@ -1,0 +1,19 @@
+# Node / Next.js
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+frontend/.env.local
+
+# .NET
+bin/
+obj/
+backend/**/bin/
+backend/**/obj/
+
+# OS / editor
+.vs/
+.vscode/
+*.user
+Thumbs.db
+.DS_Store
