@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { withBasePath } from "@/lib/basePath";
 
 export function Hero() {
   return (
@@ -73,7 +74,7 @@ export function Hero() {
         </div>
         <div style={{ flex: "0 0 auto", position: "relative", zIndex: 2 }}>
           <Image
-            src="/images/mascota-celebra.png"
+            src={withBasePath("/images/mascota-celebra.png")}
             alt=""
             width={300}
             height={300}

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { GoogleLogin } from "@react-oauth/google";
 import { formatArs } from "@/lib/api";
+import { withBasePath } from "@/lib/basePath";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 
@@ -51,7 +52,7 @@ export function Header() {
       <header style={{ background: "#E63312", position: "sticky", top: 0, zIndex: 50, boxShadow: "0 2px 14px rgba(0,0,0,.12)" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto", padding: "14px 22px", display: "flex", alignItems: "center", gap: 18 }}>
           <Link href="/">
-            <Image src="/images/logoMaxi.png" alt="Maxi Ofertas" width={140} height={38} style={{ height: 38, width: "auto" }} priority />
+            <Image src={withBasePath("/images/logoMaxi.png")} alt="Maxi Ofertas" width={140} height={38} style={{ height: 38, width: "auto" }} priority />
           </Link>
           <button
             style={{

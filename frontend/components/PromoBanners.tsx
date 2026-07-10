@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { withBasePath } from "@/lib/basePath";
 
 export function PromoBanners() {
   return (
@@ -27,7 +28,7 @@ export function PromoBanners() {
             Ver bodega →
           </a>
           <Image
-            src="/images/mascota-traje-vino.png"
+            src={withBasePath("/images/mascota-traje-vino.png")}
             alt=""
             width={180}
             height={180}
@@ -57,7 +58,7 @@ export function PromoBanners() {
             Temporada fría →
           </a>
           <Image
-            src="/images/mascota-campera.png"
+            src={withBasePath("/images/mascota-campera.png")}
             alt=""
             width={190}
             height={190}
@@ -81,7 +82,7 @@ export function PromoBanners() {
           }}
         >
           <Image
-            src="/images/mascota-afa-pelota.png"
+            src={withBasePath("/images/mascota-afa-pelota.png")}
             alt=""
             width={180}
             height={180}

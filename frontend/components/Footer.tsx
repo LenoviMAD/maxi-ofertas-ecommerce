@@ -1,11 +1,12 @@
 import Image from "next/image";
+import { withBasePath } from "@/lib/basePath";
 
 export function Footer() {
   return (
     <footer style={{ background: "#1A1A1A", color: "#cfcfcf" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "40px 22px 22px", display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 1fr", gap: 28 }}>
         <div>
-          <Image src="/images/logo-white.png" alt="Maxi Ofertas" width={140} height={36} style={{ height: 36, width: "auto", marginBottom: 12 }} />
+          <Image src={withBasePath("/images/logo-white.png")} alt="Maxi Ofertas" width={140} height={36} style={{ height: 36, width: "auto", marginBottom: 12 }} />
           <p style={{ fontSize: 13, lineHeight: 1.6, maxWidth: 230, margin: 0 }}>
             Más barato y en un solo lugar. El mayorista de tu negocio.
           </p>
