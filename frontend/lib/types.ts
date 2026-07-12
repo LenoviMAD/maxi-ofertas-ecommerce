@@ -46,3 +46,18 @@ export interface Order {
   total: number;
   items: OrderItem[];
 }
+
+export interface Sucursal {
+  id: string;            // "claypole", "bernal", ...
+  nombre: string;        // "Claypole"
+  direccion: string;     // "Av. Lacaze 5948, Claypole"
+  telefono: string;
+  horarios: string;      // texto legible del sitio real
+  lat: number;
+  lng: number;
+}
+
+export interface StaticProduct extends Omit<Product, "lastUnits" | "imageUrl"> {
+  ean: string | null;
+  stockBySucursal: Record<string, number>; // clave = Sucursal.id
+}
