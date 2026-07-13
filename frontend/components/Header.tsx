@@ -1,19 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { GoogleLogin } from "@react-oauth/google";
 import { formatArs } from "@/lib/api";
 import { withBasePath } from "@/lib/basePath";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { CATEGORIES } from "@/lib/products";
 import { SucursalSelector } from "./SucursalSelector";
-
-const categories = ["Almacén", "Bebidas", "Lácteos", "Frescos", "Limpieza", "Perfumería", "Bebés", "Mascotas"];
 
 export function Header() {
   const { user, isAuthenticated, loginWithGoogleIdToken, logout } = useAuth();
   const { cart, itemCount } = useCart();
+  const router = useRouter();
+  const [query, setQuery] = useState("");
 
   return (
     <>
@@ -53,7 +56,8 @@ export function Header() {
           <Link href="/">
             <Image src={withBasePath("/images/logoMaxi.png")} alt="Maxi Ofertas" width={140} height={38} style={{ height: 38, width: "auto" }} priority />
           </Link>
-          <button
+          <Link
+            href="/productos"
             style={{
               display: "flex",
               alignItems: "center",
@@ -65,13 +69,16 @@ export function Header() {
               padding: "11px 16px",
               fontWeight: 700,
               fontSize: 14,
-              cursor: "pointer",
               flex: "0 0 auto",
             }}
           >
             <span className="msym" style={{ fontSize: 21 }}>menu</span>Categorías
-          </button>
-          <div
+          </Link>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              router.push(`/productos?q=${encodeURIComponent(query.trim())}`);
+            }}
             style={{
               flex: 1,
               display: "flex",
@@ -84,13 +91,18 @@ export function Header() {
             }}
           >
             <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar productos, marcas y más…"
               style={{ flex: 1, border: "none", padding: "12px 16px", fontSize: 14, outline: "none", minWidth: 0 }}
             />
-            <button style={{ background: "#F7941D", color: "#fff", border: "none", padding: "0 20px", cursor: "pointer", display: "flex", alignItems: "center" }}>
+            <button
+              type="submit"
+              style={{ background: "#F7941D", color: "#fff", border: "none", padding: "0 20px", cursor: "pointer", display: "flex", alignItems: "center" }}
+            >
               <span className="msym" style={{ fontSize: 24 }}>search</span>
             </button>
-          </div>
+          </form>
 
           {isAuthenticated ? (
             <button
@@ -167,26 +179,30 @@ export function Header() {
 
         <div style={{ background: "#c42a0f" }}>
           <div className="shelf" style={{ maxWidth: 1280, margin: "0 auto", padding: "0 22px", display: "flex", gap: 2, overflowX: "auto" }}>
-            {categories.map((cat) => (
-              <div key={cat} style={{ color: "#fff", fontWeight: 600, fontSize: 13, padding: "10px 14px", whiteSpace: "nowrap", cursor: "pointer" }}>
+            {CATEGORIES.map((cat) => (
+              <Link
+                key={cat}
+                href={`/productos?cat=${encodeURIComponent(cat)}`}
+                style={{ color: "#fff", fontWeight: 600, fontSize: 13, padding: "10px 14px", whiteSpace: "nowrap" }}
+              >
                 {cat}
-              </div>
+              </Link>
             ))}
-            <div
+            <Link
+              href="/productos?ofertas=1"
               style={{
                 color: "#FFD23F",
                 fontWeight: 800,
                 fontSize: 13,
                 padding: "10px 14px",
                 whiteSpace: "nowrap",
-                cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 gap: 5,
               }}
             >
               <span className="msym" style={{ fontSize: 17 }}>sell</span>Ofertas
-            </div>
+            </Link>
           </div>
         </div>
       </header>
