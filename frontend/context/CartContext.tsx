@@ -1,9 +1,11 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { apiFetch } from "@/lib/api";
+import * as ops from "@/lib/cart";
+import { PRODUCT_BY_ID } from "@/lib/products";
 import type { Cart, Order, PriceMode } from "@/lib/types";
-import { useAuth } from "./AuthContext";
+
+const CART_STORAGE_KEY = "maxi_cart_v1";
 
 interface CartContextValue {
   cart: Cart | null;
@@ -17,60 +19,82 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [loading, setLoading] = useState(false);
+function loadCart(): Cart {
+  try {
+    const raw = window.localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return ops.emptyCart();
+    const parsed = JSON.parse(raw) as Cart;
+    if (!Array.isArray(parsed.items) || typeof parsed.total !== "number") {
+      return ops.emptyCart();
+    }
+    return parsed;
+  } catch {
+    // JSON corrupto o localStorage inaccesible: arrancar de cero
+    return ops.emptyCart();
+  }
+}
 
-  const refresh = useCallback(async () => {
-    if (!isAuthenticated) {
-      setCart(null);
-      return;
-    }
-    setLoading(true);
-    try {
-      const data = await apiFetch<Cart>("/api/cart");
-      setCart(data);
-    } finally {
-      setLoading(false);
-    }
-  }, [isAuthenticated]);
+function saveCart(cart: Cart) {
+  try {
+    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  } catch {
+    // localStorage inaccesible (incógnito estricto): seguimos en memoria
+  }
+}
+
+export function CartProvider({ children }: { children: React.ReactNode }) {
+  const [cart, setCart] = useState<Cart>(ops.emptyCart());
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    refresh();
-  }, [refresh]);
+    setCart(loadCart());
+    setLoading(false);
+  }, []);
 
   const addItem = useCallback(
     async (productId: string, mode: PriceMode, quantity: number) => {
-      const data = await apiFetch<Cart>("/api/cart/items", {
-        method: "POST",
-        body: JSON.stringify({ productId, mode, quantity }),
-      });
-      setCart(data);
+      const product = PRODUCT_BY_ID.get(productId);
+      if (!product) throw new Error(`Producto desconocido: ${productId}`);
+      const next = ops.addItem(cart, product, mode, quantity);
+      setCart(next);
+      saveCart(next);
     },
-    []
+    [cart]
   );
 
-  const updateItemQuantity = useCallback(async (itemId: string, quantity: number) => {
-    const data = await apiFetch<Cart>(`/api/cart/items/${itemId}`, {
-      method: "PUT",
-      body: JSON.stringify({ quantity }),
-    });
-    setCart(data);
-  }, []);
+  const updateItemQuantity = useCallback(
+    async (itemId: string, quantity: number) => {
+      const next = ops.updateItemQuantity(cart, itemId, quantity);
+      setCart(next);
+      saveCart(next);
+    },
+    [cart]
+  );
 
-  const removeItem = useCallback(async (itemId: string) => {
-    const data = await apiFetch<Cart>(`/api/cart/items/${itemId}`, { method: "DELETE" });
-    setCart(data);
-  }, []);
+  const removeItem = useCallback(
+    async (itemId: string) => {
+      const next = ops.removeItem(cart, itemId);
+      setCart(next);
+      saveCart(next);
+    },
+    [cart]
+  );
 
-  const checkout = useCallback(async () => {
-    const order = await apiFetch<Order>("/api/orders", { method: "POST" });
-    setCart((prev) => (prev ? { ...prev, items: [], total: 0 } : prev));
+  const checkout = useCallback(async (): Promise<Order> => {
+    const order: Order = {
+      id: `MX-${Date.now().toString(36).toUpperCase()}`,
+      status: "Pending",
+      createdAt: new Date().toISOString(),
+      total: cart.total,
+      items: cart.items,
+    };
+    const next = ops.emptyCart();
+    setCart(next);
+    saveCart(next);
     return order;
-  }, []);
+  }, [cart]);
 
-  const itemCount = cart?.items.reduce((sum, i) => sum + i.quantity, 0) ?? 0;
+  const itemCount = cart.items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
     <CartContext.Provider
