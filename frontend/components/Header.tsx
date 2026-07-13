@@ -51,7 +51,7 @@ export function Header() {
         </div>
       </div>
 
-      <header style={{ background: "#E63312", position: "sticky", top: 0, zIndex: 50, boxShadow: "0 2px 14px rgba(0,0,0,.12)" }}>
+      <header style={{ background: "#f1eee7", position: "sticky", top: 0, zIndex: 50, boxShadow: "0 2px 14px rgba(0,0,0,.12)" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto", padding: "14px 22px", display: "flex", alignItems: "center", gap: 18 }}>
           <Link href="/">
             <Image src={withBasePath("/images/logoMaxi.png")} alt="Maxi Ofertas" width={140} height={38} style={{ height: 38, width: "auto" }} priority />
