@@ -7,6 +7,7 @@ import { formatArs } from "@/lib/api";
 import { withBasePath } from "@/lib/basePath";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { SucursalSelector } from "./SucursalSelector";
 
 const categories = ["Almacén", "Bebidas", "Lácteos", "Frescos", "Limpieza", "Perfumería", "Bebés", "Mascotas"];
 
@@ -36,9 +37,7 @@ export function Header() {
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-            <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span className="msym" style={{ fontSize: 16 }}>location_on</span>Elegí tu sucursal
-            </span>
+            <SucursalSelector />
             <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span className="msym" style={{ fontSize: 16 }}>receipt_long</span>Seguí tu pedido
             </span>

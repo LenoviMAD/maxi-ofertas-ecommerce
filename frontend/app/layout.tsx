@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Barlow_Condensed, IBM_Plex_Mono, Inter } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
+import { SucursalProvider } from "@/context/SucursalContext";
 import { GoogleOAuthProviderClient } from "@/components/GoogleOAuthProviderClient";
 import "./globals.css";
 
@@ -44,7 +45,9 @@ export default function RootLayout({
       <body>
         <GoogleOAuthProviderClient>
           <AuthProvider>
-            <CartProvider>{children}</CartProvider>
+            <SucursalProvider>
+              <CartProvider>{children}</CartProvider>
+            </SucursalProvider>
           </AuthProvider>
         </GoogleOAuthProviderClient>
       </body>
