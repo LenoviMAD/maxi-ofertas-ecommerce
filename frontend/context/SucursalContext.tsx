@@ -54,12 +54,16 @@ export function SucursalProvider({ children }: { children: React.ReactNode }) {
   const [locating, setLocating] = useState(false);
 
   useEffect(() => {
+    // Hidratación única desde localStorage: el prerender estático no puede leer
+    // window, así que el estado real recién se conoce acá.
     const stored = loadState();
     if (!stored) return;
     const found = SUCURSALES.find((s) => s.id === stored.sucursalId);
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (found) setSucursal(found);
     setUserCoords(stored.userCoords ?? null);
     setHasChosen(Boolean(stored.hasChosen));
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   const elegirSucursal = useCallback(

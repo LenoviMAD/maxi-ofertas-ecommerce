@@ -30,12 +30,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Hidratación única desde localStorage: el prerender estático no puede leer
+    // window, así que el estado real recién se conoce acá.
     const token = getToken();
     const storedUser = window.localStorage.getItem(USER_STORAGE_KEY);
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (token && storedUser) {
       setUser(JSON.parse(storedUser));
     }
     setLoading(false);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   const loginWithGoogleIdToken = useCallback(async (idToken: string) => {

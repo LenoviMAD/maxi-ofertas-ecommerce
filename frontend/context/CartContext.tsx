@@ -47,8 +47,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Hidratación única desde localStorage: el prerender estático no puede leer
+    // window, así que el estado real recién se conoce acá (patrón de los docs de
+    // Next para static export).
+    /* eslint-disable react-hooks/set-state-in-effect */
     setCart(loadCart());
     setLoading(false);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   const addItem = useCallback(

@@ -25,7 +25,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [cambiandoSucursal, setCambiandoSucursal] = useState(false);
 
-  const items = cart?.items ?? [];
+  const items = useMemo(() => cart?.items ?? [], [cart]);
   const total = cart?.total ?? 0;
 
   const desde = useMemo(
