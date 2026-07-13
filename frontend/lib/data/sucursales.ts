@@ -33,7 +33,7 @@ export const SUCURSALES: Sucursal[] = [
   },
   {
     id: "solano",
-    nombre: "San Fco. Solano",
+    nombre: "Solano",
     direccion: "Av. Monteverde 376, San Francisco Solano",
     telefono: "11-3313-9137",
     horarios: "Lun a Vie: 7 a 16:30 hs · Sáb: 7 a 16 hs · Dom y feriados: 7 a 12:30 hs",
@@ -42,7 +42,7 @@ export const SUCURSALES: Sucursal[] = [
   },
   {
     id: "quilmes-oeste",
-    nombre: "Quilmes Oeste",
+    nombre: "Quilmes",
     direccion: "Felipe Amoedo 1998, Quilmes Oeste",
     telefono: "11-2287-7530",
     horarios: "Lun a Vie: 7 a 16:30 hs · Sáb: 7 a 16 hs · Dom y feriados: 7 a 12:30 hs",
@@ -51,7 +51,7 @@ export const SUCURSALES: Sucursal[] = [
   },
   {
     id: "dardo-rocha",
-    nombre: "Dardo Rocha",
+    nombre: "Berazategui",
     direccion: "Dardo Rocha 1752, Bernal Oeste",
     telefono: "11-6604-8467",
     horarios: "Lun a Vie: 7 a 16:30 hs · Sáb: 7 a 16 hs · Dom y feriados: 7 a 12:30 hs",
