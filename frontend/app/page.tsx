@@ -1,5 +1,4 @@
-import { API_URL } from "@/lib/api";
-import type { Product } from "@/lib/types";
+import { PRODUCTS } from "@/lib/products";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { FeaturedProducts, OnFireShelf } from "@/components/ProductSections";
@@ -7,20 +6,11 @@ import { PromoBanners } from "@/components/PromoBanners";
 import { BrandsSection } from "@/components/BrandsSection";
 import { Footer } from "@/components/Footer";
 
-async function getProducts(): Promise<Product[]> {
-  try {
-    const res = await fetch(`${API_URL}/api/products`, { cache: "no-store" });
-    if (!res.ok) return [];
-    return res.json();
-  } catch {
-    return [];
-  }
-}
-
-export default async function Home() {
-  const products = await getProducts();
-  const featured = products.slice(0, 8);
-  const onFire = products.slice(8);
+export default function Home() {
+  // products.json viene ordenado por descuento desc:
+  // top 8 = destacados, los siguientes 12 = ofertas on fire.
+  const featured = PRODUCTS.slice(0, 8);
+  const onFire = PRODUCTS.slice(8, 20);
 
   return (
     <div style={{ minHeight: "100vh" }}>

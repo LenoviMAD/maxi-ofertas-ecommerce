@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import { formatArs } from "@/lib/api";
-import type { PriceMode, Product } from "@/lib/types";
-import { useAuth } from "@/context/AuthContext";
+import type { PriceMode, StaticProduct } from "@/lib/types";
 import { useCart } from "@/context/CartContext";
+import { useSucursal } from "@/context/SucursalContext";
+import { formatKm, sucursalesPorDistancia } from "@/lib/geo";
+import { stockDe } from "@/lib/stock";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product }: { product: StaticProduct }) {
   const [mode, setMode] = useState<PriceMode>("unidad");
-  const { isAuthenticated } = useAuth();
   const { addItem } = useCart();
+  const { sucursal, userCoords } = useSucursal();
 
   const isBulto = mode === "bulto";
   const bigPrice = isBulto ? product.bultoPrice : product.unitPrice;
@@ -17,11 +19,17 @@ export function ProductCard({ product }: { product: Product }) {
     ? `Por unidad: ${formatArs(product.unitPrice)}`
     : `Bulto x${product.bultoQty}: ${formatArs(product.bultoPrice)}`;
 
+  const stock = stockDe(product, sucursal.id);
+  const sinStock = stock === 0;
+  const pocasUnidades = stock > 0 && stock < 2 * product.bultoQty;
+
+  const alternativa = sinStock
+    ? sucursalesPorDistancia(userCoords ?? { lat: sucursal.lat, lng: sucursal.lng }).find(
+        (s) => s.id !== sucursal.id && stockDe(product, s.id) > 0
+      ) ?? null
+    : null;
+
   const handleAdd = async () => {
-    if (!isAuthenticated) {
-      window.alert("Iniciá sesión con Google para agregar productos al carrito.");
-      return;
-    }
     await addItem(product.id, mode, isBulto ? product.bultoQty : 1);
   };
 
@@ -69,25 +77,6 @@ export function ProductCard({ product }: { product: Product }) {
             }}
           >
             -{product.discountPercent}%
-          </span>
-        )}
-        {product.lastUnits && (
-          <span
-            style={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              background: "#F57C00",
-              color: "#fff",
-              fontWeight: 700,
-              fontSize: 9,
-              letterSpacing: ".04em",
-              padding: "4px 7px",
-              borderRadius: 5,
-              textTransform: "uppercase",
-            }}
-          >
-            Últimas unidades
           </span>
         )}
         {product.freeShipping && (
@@ -174,11 +163,40 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
           <div style={{ fontSize: 11.5, color: "#8a8a86", marginTop: 3 }}>{subLabel}</div>
         </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            fontSize: 11,
+            fontWeight: 600,
+            color: sinStock ? "#8a8a86" : pocasUnidades ? "#F57C00" : "#2E7D32",
+          }}
+        >
+          <span className="msym" style={{ fontSize: 14 }}>
+            {sinStock ? "block" : "inventory_2"}
+          </span>
+          <span>
+            {sinStock ? (
+              <>
+                Sin stock en {sucursal.nombre}
+                {alternativa && (
+                  <> · hay en {alternativa.nombre} ({formatKm(alternativa.distanciaKm)})</>
+                )}
+              </>
+            ) : pocasUnidades ? (
+              <>Últimas {stock} unidades en {sucursal.nombre}</>
+            ) : (
+              <>Quedan {stock} en {sucursal.nombre}</>
+            )}
+          </span>
+        </div>
         <button
           onClick={handleAdd}
+          disabled={sinStock}
           style={{
             marginTop: 4,
-            background: "#E63312",
+            background: sinStock ? "#c9c9c4" : "#E63312",
             color: "#fff",
             border: "none",
             borderRadius: 8,
@@ -187,7 +205,7 @@ export function ProductCard({ product }: { product: Product }) {
             fontSize: 12.5,
             textTransform: "uppercase",
             letterSpacing: ".03em",
-            cursor: "pointer",
+            cursor: sinStock ? "default" : "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
