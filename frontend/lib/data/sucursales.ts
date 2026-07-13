@@ -14,8 +14,8 @@ export const SUCURSALES: Sucursal[] = [
     lng: -58.3372,
   },
   {
-    id: "villa-la-florida",
-    nombre: "Villa La Florida",
+    id: "fcio-varela-1",
+    nombre: "Fcio. Varela",
     direccion: "Av. Monteverde 2246, Villa La Florida",
     telefono: "11-5314-3597",
     horarios: "Lun a Vie: 7 a 16:30 hs · Sáb: 7 a 16 hs · Dom y feriados: 7 a 12:30 hs",
@@ -23,8 +23,8 @@ export const SUCURSALES: Sucursal[] = [
     lng: -58.3222,
   },
   {
-    id: "santa-rosa",
-    nombre: "Santa Rosa",
+    id: "fcio-varela-2",
+    nombre: "Fcio. Varela",
     direccion: "Av. Eva Perón 5743, Santa Rosa",
     telefono: "11-5058-3489",
     horarios: "Lun a Vie: 7 a 16:30 hs · Sáb: 7 a 16 hs · Dom y feriados: 7 a 12:30 hs",
